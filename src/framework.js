@@ -147,8 +147,9 @@ class GameState
 
     static Create(update, draw) {
         let gameState = new GameState();
-        this.update = update;
-        this.draw = draw;
+        gameState.update = update;
+        gameState.draw = draw;
+        return gameState
     }
 }
 

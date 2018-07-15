@@ -90,12 +90,23 @@ setLevel(levels[currentLevel]);
 /**
  * Game states
  */
-let activeState = () => { }
+const gameStates = {
+    idle: 0,
+    game: 1,
+    won: 2,
+    lost: 3,
+}
 
 /**
  * Game State
  */
-let gameState = () => {
+let idleState = GameState.Create(() => {
+
+}, () => {
+    Text.draw("Press Space to Start!", 100.0, 100.0)
+});
+
+let gameState = GameState.Create(() => {
     //  
     player.x += player.vx;
     player.y += player.vy;
@@ -111,7 +122,7 @@ let gameState = () => {
     enemies.forEach(enemy => {
         if (Utils.dist(player, enemy) < 60.0) {
             // lost 
-            activeState = gameLoseState;
+            currentGameState = gameStates.lost;
         }
     })
 
@@ -119,7 +130,8 @@ let gameState = () => {
     if (Utils.dist(player, destination) < 60.0) {
         // check if player collected all the coins
         if (coins.length === 0) {
-            activeState = gameWonState;
+            // won
+            currentGameState = gameStates.won;
         }
     }
 
@@ -141,23 +153,55 @@ let gameState = () => {
             enemy.vx = -1.0;
         }
     })
-}
+}, () => {
+    // draw player
+    playerSprite.x = player.x;
+    playerSprite.y = player.y;
+    playerSprite.draw();
 
-let idleState = () => {
-    // nothing happens here
+    // draw destination
+    destinationSprite.x = destination.x;
+    destinationSprite.y = destination.y;
+    destinationSprite.draw();
 
-}
+    // draw enemies
+    enemies.forEach(enemy => {
+        enemySprite.x = enemy.x
+        enemySprite.y = enemy.y
 
-let gameWonState = () => {
-    alert("You won!");
+        enemySprite.draw();
+    })
 
-    activeState = idleState;
-}
+    // draw coins
+    coins.forEach(coin => {
+        coinSprite.x = coin.x
+        coinSprite.y = coin.y
 
-let gameLoseState = () => {
-    alert("You lost :(");
-    setLevel(levels[0]);
-}
+        coinSprite.draw();
+    })
+
+    if(coins.length > 0) {
+        Text.draw("Coins left: " + coins.length, 50.0, 50.0)
+    } else {
+        Text.draw("Go to flag!", 50.0, 50.0)
+    }
+});
+
+let wonState = GameState.Create(() => {
+
+}, () => {
+    Text.draw("You won!", 50.0, 50.0)
+})
+
+let lostState = GameState.Create(() => {
+
+}, () => {
+    Text.draw("You lost!", 50.0, 50.0)
+})
+
+let currentGameState = gameStates.idle;
+
+let states = [idleState, gameState, wonState, lostState]
 
 /**
  * Setup keyboard
@@ -196,17 +240,12 @@ keyboard.on(38, () => {
 
 keyboard.on(32, () => { }, () => {
 
-    // we lost or won
-    if(activeState == idleState) {
-        currentLevel ++;
-        setLevel(levels[currentLevel]);
-        activeState = gameState;
-    }
-    else {
-        activeState = gameState;
+
+    if(currentGameState === gameStates.idle)
+    {
+        currentGameState = gameStates.game;
     }
 
-    //activeState = gameState;
 });
 
 keyboard.setup();
@@ -215,37 +254,11 @@ keyboard.setup();
  * Setup application
  */
 app.update = () => {
-    activeState();
+    states[currentGameState].update();
 }
 
 app.draw = () => {
-    // draw player
-    playerSprite.x = player.x;
-    playerSprite.y = player.y;
-    playerSprite.draw();
-
-    // draw destination
-    destinationSprite.x = destination.x;
-    destinationSprite.y = destination.y;
-    destinationSprite.draw();
-
-    // draw enemies
-    enemies.forEach(enemy => {
-        enemySprite.x = enemy.x
-        enemySprite.y = enemy.y
-
-        enemySprite.draw();
-    })
-
-    // draw coins
-    coins.forEach(coin => {
-        coinSprite.x = coin.x
-        coinSprite.y = coin.y
-
-        coinSprite.draw();
-    })
-
-    Text.draw("Hello Ewunia <3", 50.0, 50.0)
+    states[currentGameState].draw();
 }
 
 /**
