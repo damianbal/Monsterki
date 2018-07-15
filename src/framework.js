@@ -138,11 +138,10 @@ class Text {
 /**
  * GameState
  */
-class GameState 
-{
+class GameState {
     constructor() {
-        this.update = () => {}
-        this.draw = () => {}
+        this.update = () => { }
+        this.draw = () => { }
     }
 
     static Create(update, draw) {
@@ -161,7 +160,7 @@ class App {
         this.update = () => { };
         this.draw = () => { };
 
-        ctx.font="26px sans-serif";
+        ctx.font = "20px sans-serif";
     }
 
     width = () => {
@@ -175,7 +174,7 @@ class App {
     run() {
         setInterval(this.update.bind(this), 5);
         setInterval(this.internalDraw.bind(this), 5);
-       // setInterval(this.draw.bind(this), 5);
+        // setInterval(this.draw.bind(this), 5);
     }
 
     internalDraw() {
