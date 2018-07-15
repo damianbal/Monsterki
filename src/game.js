@@ -44,7 +44,8 @@ const levels = [
     {
         player: { x: 30.0, y: 30.0, vx: 0.0, vy: 0.0 },
         destination: { x: 800.0, y: 30.0 },
-        coins: [{ x: 300.0, y: 150.0 }]
+        coins: [{ x: 300.0, y: 150.0 }],
+        enemies: [],
     },
     {
         player: { x: 30.0, y: 30.0, vx: 0.0, vy: 0.0 },
@@ -81,7 +82,7 @@ function setLevel(level) {
 }
 
 // current game level
-let currentLevel = 1;
+let currentLevel = 0;
 
 // set the level
 setLevel(levels[currentLevel]);
@@ -90,7 +91,6 @@ setLevel(levels[currentLevel]);
  * Game states
  */
 let activeState = () => { }
-
 
 /**
  * Game State
@@ -156,7 +156,7 @@ let gameWonState = () => {
 
 let gameLoseState = () => {
     alert("You lost :(");
-    activeState = idleState;
+    setLevel(levels[0]);
 }
 
 /**
@@ -195,7 +195,18 @@ keyboard.on(38, () => {
 });
 
 keyboard.on(32, () => { }, () => {
-    activeState = gameState;
+
+    // we lost or won
+    if(activeState == idleState) {
+        currentLevel ++;
+        setLevel(levels[currentLevel]);
+        activeState = gameState;
+    }
+    else {
+        activeState = gameState;
+    }
+
+    //activeState = gameState;
 });
 
 keyboard.setup();
@@ -233,6 +244,8 @@ app.draw = () => {
 
         coinSprite.draw();
     })
+
+    Text.draw("Hello Ewunia <3", 50.0, 50.0)
 }
 
 /**

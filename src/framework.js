@@ -124,12 +124,43 @@ class Sprite {
 }
 
 /**
+ * Text
+ */
+class Text {
+    static draw(text, x, y) {
+        ctx.beginPath();
+        ctx.fillStyle = "#fff";
+        ctx.fillText(text, x, y)
+        ctx.closePath();
+    }
+}
+
+/**
+ * GameState
+ */
+class GameState 
+{
+    constructor() {
+        this.update = () => {}
+        this.draw = () => {}
+    }
+
+    static Create(update, draw) {
+        let gameState = new GameState();
+        this.update = update;
+        this.draw = draw;
+    }
+}
+
+/**
  * App
  */
 class App {
     constructor() {
         this.update = () => { };
         this.draw = () => { };
+
+        ctx.font="26px sans-serif";
     }
 
     width = () => {
@@ -143,13 +174,15 @@ class App {
     run() {
         setInterval(this.update.bind(this), 5);
         setInterval(this.internalDraw.bind(this), 5);
-        setInterval(this.draw.bind(this), 5);
+       // setInterval(this.draw.bind(this), 5);
     }
 
     internalDraw() {
         ctx.fillStyle = "#AAAE40";
         ctx.rect(0, 0, canvas.width, canvas.height);
         ctx.fill();
+
+        this.draw();
     }
 }
 
