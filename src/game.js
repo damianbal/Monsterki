@@ -40,6 +40,85 @@ let destination = {
 };
 
 /**
+ * Game states
+ */
+let activeState = () => {}
+
+
+/**
+ * Game State
+ */
+let gameState = () => {
+    //  
+    player.x += player.vx;
+    player.y += player.vy;
+
+    console.log(Utils.dist(player, enemies[0]));
+
+    // check collision for coins
+    coins.forEach((coin, index) => {
+        if (Utils.dist(player, coin) < 60.0) {
+            coins.splice(index, 1);
+        }
+    })
+
+    // check if player collides with enemy
+    enemies.forEach(enemy => {
+        if(Utils.dist(player, enemy) < 60.0) {
+            // lost 
+            activeState = gameLoseState;
+        }
+    })
+
+    // check if player is close to destination
+    if (Utils.dist(player, destination) < 60.0) {
+        // check if player collected all the coins
+        if (coins.length === 0) {
+            activeState = gameWonState;
+        }
+    }
+
+    // update enemies
+    enemies.forEach(enemy => {
+        enemy.x += enemy.vx
+        enemy.y += enemy.vy
+
+        if (enemy.y < 0.0) {
+            enemy.vy = 1.0
+        }
+        else if (enemy.y + 64.0 > app.height()) {
+            enemy.vy = -1.0
+        }
+    })
+}
+
+let idleState = () => {
+    // nothing happens here
+    
+}
+
+let resetGameState = () => {
+    enemies = [];
+    player.x = 0.0;
+    player.y = 0.0;
+
+    coins = [];
+
+    activeState = gameState;
+}
+
+let gameWonState = () => {
+    alert("You won!");
+
+    activeState = idleState;
+}
+
+let gameLoseState = () => {
+    alert("You lost :(");
+    activeState = idleState;
+}
+
+/**
  * Setup keyboard
  */
 const keyboard = new Keyboard();
@@ -74,47 +153,17 @@ keyboard.on(38, () => {
     player.vy = 0.0
 });
 
-keyboard.setup();
+keyboard.on(32, () => {}, () => {
+    resetGameState();
+});
 
+keyboard.setup();
 
 /**
  * Setup application
  */
 app.update = () => {
-    //  
-    player.x += player.vx;
-    player.y += player.vy;
-
-    console.log(Utils.dist(player,enemies[0]));
-
-    // check collision for coins
-    coins.forEach((coin, index) => {
-        if(Utils.dist(player, coin) < 100.0) {
-            coins.splice(index,1);
-        }
-    })
-
-    // check if player is close to destination
-    if(Utils.dist(player, destination) < 100.0)
-    {
-        // check if player collected all the coins
-        if(coins.length === 0) {
-            alert('GOOD!');
-        }
-    }
-
-    // update enemies
-    enemies.forEach(enemy => {
-        enemy.x += enemy.vx
-        enemy.y += enemy.vy
-
-        if (enemy.y < 0.0) {
-            enemy.vy = 1.0
-        }
-        else if (enemy.y + 64.0 > app.height()) {
-            enemy.vy = -1.0
-        }
-    })
+    activeState();
 }
 
 app.draw = () => {
