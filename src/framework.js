@@ -25,6 +25,14 @@ function loadImage(url) {
     });
 }
 
+function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+        x: (evt.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
+        y: (evt.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
+    };
+}
+
 class Utils {
     static dist(a, b) {
         let distx = Math.abs(b.x - a.x);
@@ -66,6 +74,23 @@ class Keyboard {
     setup() {
         document.addEventListener("keydown", this.keyDownHandler.bind(this))
         document.addEventListener("keyup", this.keyUpHandler.bind(this))
+    }
+}
+
+class Mouse {
+    constructor() {
+        this.x = 0.0;
+        this.y = 0.0;
+    }
+
+    update(evt) {
+        let mousePos = getMousePos(canvas, evt);   
+        this.x = mousePos.x;
+        this.y = mousePos.y;
+    }
+
+    setup() {
+        document.addEventListener("mousemove", this.update.bind(this));
     }
 }
 

@@ -43,9 +43,9 @@ const levels = [
     {
         player: { x: 30.0, y: 30.0, vx: 0.0, vy: 0.0 },
         destination: { x: 800.0, y: 30.0 },
-        coins: [{ x: 300.0, y: 150.0 }, {x:550.0, y: 50.0}],
+        coins: [{ x: 300.0, y: 150.0 }, { x: 550.0, y: 50.0 }],
         enemies: [],
-        explosives: [{x: 600.0, y: 32.0}]
+        explosives: [{ x: 600.0, y: 32.0 }]
     },
     {
         player: { x: 30.0, y: 30.0, vx: 0.0, vy: 0.0 },
@@ -61,7 +61,7 @@ const levels = [
     {
         player: { x: 30.0, y: 30.0, vx: 0.0, vy: 0.0 },
         destination: { x: 800.0, y: 30.0 },
-        coins: [{ x: 300.0, y: 150.0 }, { x: 400.0, y: 200.0 }, {x:800.0, y:550.0}],
+        coins: [{ x: 300.0, y: 150.0 }, { x: 400.0, y: 200.0 }, { x: 800.0, y: 550.0 }],
         enemies: [
             {
                 x: 200.0, y: 300.0, vx: 1.0, vy: -1.0, speed: 1.5
@@ -72,7 +72,7 @@ const levels = [
     {
         player: { x: 0.0, y: 0.0, vx: 0.0, vy: 0.0 },
         destination: { x: 800.0, y: 30.0 },
-        coins: [{ x: 300.0, y: 150.0 }, { x: 300.0, y: 400.0 }, { x: 400.0, y: 10.0 }, {x:800.0, y:150.0}],
+        coins: [{ x: 300.0, y: 150.0 }, { x: 300.0, y: 400.0 }, { x: 400.0, y: 10.0 }, { x: 800.0, y: 150.0 }],
         enemies: [
             {
                 x: 100.0, y: 500.0, vx: 0.0, vy: -1.0, speed: 1.0
@@ -81,14 +81,14 @@ const levels = [
                 x: 300.0, y: 400.0, vx: 0.0, vy: 1.0, speed: 1.5
             }
         ],
-        explosives: [{ x: 100.0, y: 100.0 }, { x: 400.0, y: 150.0 }, {x: 800.0, y: 100.0 }]
+        explosives: [{ x: 100.0, y: 100.0 }, { x: 400.0, y: 150.0 }, { x: 800.0, y: 100.0 }]
     },
 ];
 
 // set game's level
 function resetLevel() {
-    player = {x:0.0,y:0.0,vx:0.0,vy:0.0}
-    destination = {x:1000.0,y:1000.0}
+    player = { x: 0.0, y: 0.0, vx: 0.0, vy: 0.0 }
+    destination = { x: 1000.0, y: 1000.0 }
     coins = []
     explosives = []
     enemies = []
@@ -125,7 +125,7 @@ const gameStates = {
 /**
  * Game State
  */
-let startState = GameState.Create(() => {}, () => {
+let startState = GameState.Create(() => { }, () => {
     Text.draw("To start playing press Space!", 50.0, 50.0)
 });
 
@@ -258,6 +258,12 @@ let currentGameState = gameStates.start;
 let states = [idleState, gameState, wonState, lostState, finishedGameState, startState]
 
 /**
+ * Setup mouse
+ */
+let mouse = new Mouse();
+mouse.setup();
+
+/**
  * Setup keyboard
  */
 const keyboard = new Keyboard();
@@ -292,22 +298,27 @@ keyboard.on(38, () => {
     player.vy = 0.0
 });
 
+// editor
+keyboard.on(69, () => {
+
+}, () => {
+ // add enemy
+});
+
 keyboard.on(32, () => { }, () => {
 
 
-    if( currentGameState === gameStates.won )
-    {
-        if(currentLevel+1 == levels.length) {
+    if (currentGameState === gameStates.won) {
+        if (currentLevel + 1 == levels.length) {
             currentGameState = gameStates.finished
         }
 
-        currentLevel ++
+        currentLevel++
         setLevel(levels[currentLevel])
         currentGameState = gameStates.game
     }
 
-    else if( currentGameState === gameStates.lost )
-    {
+    else if (currentGameState === gameStates.lost) {
         player.x = 0.0
         player.y = 0.0
 
@@ -317,8 +328,7 @@ keyboard.on(32, () => { }, () => {
     }
 
     // first time playing
-    else if( currentGameState === gameStates.start )
-    {
+    else if (currentGameState === gameStates.start) {
         player.x = 0.0
         player.y = 0.0
         currentLevel = 0
@@ -326,13 +336,21 @@ keyboard.on(32, () => { }, () => {
         setLevel(levels[currentLevel])
         currentGameState = gameStates.game
     }
-   
 
-    console.log('space', {currentGameState,currentLevel,player,enemies,explosives})
+
+    console.log('space', { currentGameState, currentLevel, player, enemies, explosives })
 
 });
 
+keyboard.on(69, () => {
+
+}, () => {
+    enemies.push({x:mouse.x, y: mouse.y, vx: 0.0, vy: 1.0, speed: 1.0});
+});
+
 keyboard.setup();
+
+
 
 /**
  * Setup application
