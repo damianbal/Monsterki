@@ -25,12 +25,11 @@ function loadImage(url) {
     });
 }
 
-class Utils 
-{
+class Utils {
     static dist(a, b) {
         let distx = Math.abs(b.x - a.x);
         let disty = Math.abs(b.y - a.y);
-        return distx+disty;
+        return distx + disty;
     }
 }
 
@@ -43,22 +42,22 @@ class Keyboard {
     }
 
     on(key, down, up) {
-        this.keys.push({key,down,up});
+        this.keys.push({ key, down, up });
     }
 
     keyDownHandler(e) {
-       
+
         this.keys.forEach(key => {
-            if(e.keyCode == key.key) {
+            if (e.keyCode == key.key) {
                 key.down();
             }
         })
     }
 
     keyUpHandler(e) {
-   
+
         this.keys.forEach(key => {
-            if(e.keyCode == key.key) {
+            if (e.keyCode == key.key) {
                 key.up();
             }
         })
@@ -85,9 +84,9 @@ class Sprite {
 
         this.setImage(image).then((i, width, height) => {
             this.w = width;
-            
+
         });
-   
+
 
     }
 
@@ -108,7 +107,7 @@ class Sprite {
         ctx.fillStyle = "red";
         //ctx.rect(this.x, this.y, this.w, this.h);
         if (this.image == null) {
-            ctx.rect(this.x - (this.w/2.0), this.y - (this.h/2.0), this.w, this.h);
+            ctx.rect(this.x - (this.w / 2.0), this.y - (this.h / 2.0), this.w, this.h);
         }
         else {
 

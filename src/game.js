@@ -26,7 +26,7 @@ let player = {
 };
 
 let enemies = [{
-    x: 200.0, y: 100.0, vx: 0.0, vy: 1.0
+    x: 200.0, y: 100.0, vx: 0.0, vy: 1.0, speed: 1.0
 }];
 
 let coins = [{
@@ -39,10 +39,57 @@ let destination = {
     x: 700.0, y: 500.0
 };
 
+const levels = [
+    // 0 - easy start
+    {
+        player: { x: 30.0, y: 30.0, vx: 0.0, vy: 0.0 },
+        destination: { x: 800.0, y: 30.0 },
+        coins: [{ x: 300.0, y: 150.0 }]
+    },
+    {
+        player: { x: 30.0, y: 30.0, vx: 0.0, vy: 0.0 },
+        destination: { x: 800.0, y: 30.0 },
+        coins: [{ x: 300.0, y: 150.0 }],
+        enemies: [
+            {
+                x: 100.0, y: 500.0, vx: 0.0, vy: -1.0, speed: 1.0
+            }
+        ]
+    },
+    {
+        player: { x: 30.0, y: 30.0, vx: 0.0, vy: 0.0 },
+        destination: { x: 800.0, y: 30.0 },
+        coins: [{ x: 300.0, y: 150.0 }, { x: 400.0, y: 200.0 }],
+        enemies: [
+            {
+                x: 200.0, y: 300.0, vx: 1.0, vy: -1.0, speed: 2.0
+            }
+        ]
+    }
+];
+
+// set game's level
+function setLevel(level) {
+    enemies = [];
+    coins = [];
+    explosives = [];
+
+    player = level.player;
+    destination = level.destination;
+    coins = level.coins;
+    enemies = level.enemies;
+}
+
+// current game level
+let currentLevel = 1;
+
+// set the level
+setLevel(levels[currentLevel]);
+
 /**
  * Game states
  */
-let activeState = () => {}
+let activeState = () => { }
 
 
 /**
@@ -53,18 +100,16 @@ let gameState = () => {
     player.x += player.vx;
     player.y += player.vy;
 
-    console.log(Utils.dist(player, enemies[0]));
-
     // check collision for coins
     coins.forEach((coin, index) => {
-        if (Utils.dist(player, coin) < 60.0) {
+        if (Utils.dist(player, coin) < 100.0) {
             coins.splice(index, 1);
         }
     })
 
     // check if player collides with enemy
     enemies.forEach(enemy => {
-        if(Utils.dist(player, enemy) < 60.0) {
+        if (Utils.dist(player, enemy) < 60.0) {
             // lost 
             activeState = gameLoseState;
         }
@@ -80,8 +125,8 @@ let gameState = () => {
 
     // update enemies
     enemies.forEach(enemy => {
-        enemy.x += enemy.vx
-        enemy.y += enemy.vy
+        enemy.x += enemy.vx * enemy.speed
+        enemy.y += enemy.vy * enemy.speed
 
         if (enemy.y < 0.0) {
             enemy.vy = 1.0
@@ -89,22 +134,18 @@ let gameState = () => {
         else if (enemy.y + 64.0 > app.height()) {
             enemy.vy = -1.0
         }
+        if (enemy.x < 0.0) {
+            enemy.vx = 1.0;
+        }
+        else if (enemy.x > app.width()) {
+            enemy.vx = -1.0;
+        }
     })
 }
 
 let idleState = () => {
     // nothing happens here
-    
-}
 
-let resetGameState = () => {
-    enemies = [];
-    player.x = 0.0;
-    player.y = 0.0;
-
-    coins = [];
-
-    activeState = gameState;
 }
 
 let gameWonState = () => {
@@ -153,8 +194,8 @@ keyboard.on(38, () => {
     player.vy = 0.0
 });
 
-keyboard.on(32, () => {}, () => {
-    resetGameState();
+keyboard.on(32, () => { }, () => {
+    activeState = gameState;
 });
 
 keyboard.setup();
