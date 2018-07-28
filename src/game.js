@@ -4,10 +4,11 @@
  * @author Damian Balandowski
  */
 
+
 /**
  * Create app
  */
-const app = new App();
+let app = new App();
 
 /**
  * Create some sprites

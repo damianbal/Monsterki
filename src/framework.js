@@ -188,11 +188,11 @@ class App {
         ctx.font = "20px sans-serif";
     }
 
-    width = () => {
+    width () {
         return canvas.width;
     }
 
-    height = () => {
+    height () {
         return canvas.height;
     }
 
